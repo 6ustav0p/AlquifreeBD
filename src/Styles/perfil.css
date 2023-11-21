@@ -1,0 +1,50 @@
+.container-perfil {
+    background-color: white;
+    height: 100vh;
+    width: 60%;
+    margin: 40px auto;
+}
+
+.container-perfil .perfil {
+    display: flex;
+    height: 100%;
+
+}
+
+.fotoPerfil {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fotoPerfil img {
+    margin-left: 80px;
+    height: 200px;
+    background-color: gray;
+    border-radius: 50%;
+    padding: 20px;
+}
+
+.infoPerfil {
+    margin-right: 40px;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.campos input {
+    width: 100%;
+    height: 20px;
+}
+
+.campos {
+    width: 80%;
+    display: flex;
+    text-align: left;
+    flex-direction: column;
+    gap: 15px;
+}

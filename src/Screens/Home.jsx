@@ -14,7 +14,7 @@ export const Home = () => {
             fetch(`http://localhost:3000/usuario/${userId}`)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error('Usuario no encontrado');
+                        throw new Error('Usuario no encontrado XD');
                     }
                     return response.json();
                 })

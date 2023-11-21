@@ -4,7 +4,7 @@ import sillas from '../img/sillas.png';
 import evento from '../img/evento.png';
 import ropa from '../img/ropa.png';
 import lavadora from '../img/lavadora.png';
-
+import '../Styles/titulo.css'
 export const Titulo = ({name}) => {
     return (
         <>

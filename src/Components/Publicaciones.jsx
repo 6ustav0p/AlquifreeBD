@@ -1,91 +1,54 @@
-import bicicleta from '../productosimg/bicicleta1.png'
-import LugarEvento from '../productosimg/lugarevento.jpg'
-import Carro from '../productosimg/carro1.jpeg'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import imgProducto1 from '../productosimg/1.png'
+import imgProducto2 from '../productosimg/2.png'
+import imgProducto3 from '../productosimg/3.png'
+import imgProducto4 from '../productosimg/4.png'
+import imgProducto5 from '../productosimg/5.png'
 
 export const Publicaciones = () => {
-  return (
-    <>
-    
-    <div className="publicaciones">
-            <h1>Elige aqui lo que deseas alquilar ⬇</h1>
-            <div className="publicacioneslista">
-                <div className="publicacion">
-                    <img src={bicicleta} alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Bicicleta raulxav 2022</p>
-                        <p>$5000/dia</p>
-                        <p>(2 unidades)</p>
-                    </div>
 
+    const [productos, setProductos] = useState([]);
+    const [productosSeleccionados, setProductosSeleccionados] = useState([]);
+    const navigate = useNavigate();
+
+
+    const imagenesProductos = [imgProducto1, imgProducto2, imgProducto3, imgProducto4, imgProducto5];
+
+    useEffect(() => {
+        fetch('http://localhost:3000/productos')
+            .then(response => response.json())
+            .then(data => setProductos(data))
+            .catch(error => console.error('Error:', error));
+    }, []);
+    const agregarAlCarrito = (producto) => {
+        setProductosSeleccionados([...productosSeleccionados, producto]);
+    };
+
+    const handleIrACarrito = () => {
+        navigate('/carrito', { state: { productosSeleccionados } });
+    };
+
+    return (
+        <>
+            <div className="publicaciones">
+                <h1>Elige aquí lo que deseas alquilar ⬇</h1>
+                <div className="publicacioneslista">
+                    {productos.map((producto) => (
+                        <div className="publicacion" key={producto.idProducto}>
+                            <img src={imagenesProductos[producto.idProducto - 1]} alt={`Producto ${producto.idProducto}`} />
+                            <div className="detalleproducto">
+                                <p className="productonombre">{producto.Descripcion}</p>
+                                <p>${producto.Precio}/día</p>
+                                <p>({producto.Stock} unidades)</p>
+                                <button onClick={() => agregarAlCarrito(producto)}>Alquilar</button>
+                                <button id="guardar">Guardar</button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                <div className="publicacion">
-                    <img src={LugarEvento} alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Lugar para quinceañero</p>
-                        <p>$35000/dia</p>
-                        <p>(1 unidad)</p>
-                    </div>
-                </div>
-                <div className="publicacion">
-                    <img src={Carro} alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Carro kia</p>
-                        <p>$200k/semana</p>
-                        <p>(2 unidades)</p>
-                    </div>
-                </div>
-                <div className="publicacion">
-                    <img src="productosimg/bicicleta2.png" alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Bicicleta smart 950 </p>
-                        <p>$100k/mes</p>
-                        <p>(3 unidades)</p>
-                    </div>
-                </div>
-                <div className="publicacion">
-                    <img src="productosimg/motocross.png" alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Moto cross</p>
-                        <p>$50000/dia</p>
-                        <p>(10 unidades)</p>
-                    </div>
-                </div>
-                <div className="publicacion">
-                    <img src="productosimg/ropanovia.png" alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Vestido para mujer</p>
-                        <p>$250k/semana</p>
-                        <p>(8 unidades)</p>
-                    </div>
-                </div>
-                <div className="publicacion">
-                    <img src="productosimg/trajenovio.jpg" alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Traje de hombre</p>
-                        <p>$150k/semana</p>
-                        <p>(14 unidades)</p>
-                    </div>
-                </div>
-                <div className="publicacion">
-                    <img src="productosimg/carro2.png" alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Carro chevrolet</p>
-                        <p>$1.2M/mes</p>
-                        <p>(2 unidades)</p>
-                    </div>
-                </div>
-                <div className="publicacion">
-                    <img src="productosimg/silla.jpg" alt=""></img>
-                    <div className="detalleproducto">
-                        <p className="productonombre">Sillas para eventos</p>
-                        <p>$1000/dia</p>
-                        <p>(400 unidades)</p>
-                    </div>
-                </div>
+                <button onClick={handleIrACarrito}>Ir al carrito</button>
             </div>
-
-        </div>
-
-    </>
-  )
+        </>
+    )
 }

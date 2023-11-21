@@ -78,6 +78,19 @@ app.post('/login', (req, res) => {
     });
   });
   
+  app.get('/productos', (req, res) => {
+    const sql = `SELECT * FROM producto`;
+
+    db.query(sql, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error en la consulta de la base de datos' });
+            return;
+        }
+
+        res.json(results);
+    });
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
