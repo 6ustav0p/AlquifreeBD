@@ -26,7 +26,18 @@ db.connect(err => {
 
 app.get('/usuario/:id', (req, res) => {
     const id = req.params.id;
-    const sql = `SELECT * FROM usuario WHERE idUsuario =?`;
+    const sql = `SELECT u.*, 
+                        CONCAT(u.PrimerNombre, ' ', u.SegundoNombre, ' ', u.PrimerApellido, ' ', u.SegundoApellido) AS NombreCompleto,
+                        d.Calle, 
+                        d.Numero,
+                        ci.Nombre AS Ciudad,
+                        dp.Nombredpto AS Departamento
+                FROM usuario u
+                JOIN direccion d ON u.Direccion_idDireccion = d.idDireccion
+                JOIN ciudad ci ON d.Ciudad_idCiudad = ci.idCiudad
+                JOIN departamento dp ON ci.Departamento_idDepartamento = dp.idDepartamento
+                WHERE u.idUsuario = ?`;
+
     db.query(sql, [id], (error, results) => {
         if (error) {
             res.status(500).json({ error: 'Error en la consulta de la base de datos' });
@@ -34,12 +45,13 @@ app.get('/usuario/:id', (req, res) => {
         }
 
         if (results.length === 0) {
-            res.status(404).json({ error: 'Usuario no encontrado ' });
+            res.status(404).json({ error: 'Usuario no encontrado' });
         } else {
             res.json(results[0]);
         }
     });
 });
+
 
 
 app.post('/login', (req, res) => {

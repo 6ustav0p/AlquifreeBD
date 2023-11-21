@@ -1,9 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import React from 'react'
 import Cart from '../img/cart.png'
 import Perfil from '../img/perfil.png'
 import Wish from '../img/wish.png'
 export const Navbar = ({ usuario }) => {
+    const navigate = useNavigate();
+
+    const handlePerfilClick = () => {
+        navigate('/perfil', { state: usuario });
+    };
+
+    const handleCartClick = () => {
+        navigate('/carrito', { state: usuario });
+    };
+
+    const handleWishClick = () => {
+        navigate('/wishlist', { state: usuario });
+    };
+
     return (
 
         <>
@@ -41,13 +55,11 @@ export const Navbar = ({ usuario }) => {
                     </li>
                     <li>
                         <div className="imgNav">
-                            <Link to='/carrito'><img className="cartimg" src={Cart}></img></Link>
+                            <a onClick={handleCartClick}><img className="cartimg" src={Cart}></img></a>
 
-                            <Link to='wishlist'><img src={Wish} className="cartimg" /></Link>
+                            <a onClick={handleWishClick}><img src={Wish} className="cartimg" /></a>
 
-                            <Link
-                                to='/perfil'>  <img className="perfilimg" src={Perfil}>
-                                </img></Link>
+                            <a onClick={handlePerfilClick}><img className="perfilimg" src={Perfil}></img></a>
                         </div>
 
                     </li>
