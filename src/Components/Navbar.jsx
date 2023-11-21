@@ -1,14 +1,20 @@
+import { Link } from "react-router-dom";
 import React from 'react'
 import Cart from '../img/cart.png'
 import Perfil from '../img/perfil.png'
-
-export const Navbar = () => {
+import Wish from '../img/wish.png'
+export const Navbar = ({ usuario }) => {
     return (
+
         <>
             <nav className="navbar">
                 <ul className="listanavbar">
-                    <li id="hovernav"> <a id="links" href="#">Inicio</a></li>
-                    <li id="hovernav"> <a id="links" href="">Publicar</a></li>
+                    <li id="hovernav">
+                        <Link to='/'>Inicio</Link>
+                    </li>
+                    <li id="hovernav">
+                        <Link to='/'>Publicar</Link>
+                    </li>
                     <li>
                         <div class="search-container">
                             <input type="text" className="search-input" name="q" placeholder="🔎 Buscar..." autoComplete="off" />
@@ -34,14 +40,30 @@ export const Navbar = () => {
                         </div>
                     </li>
                     <li>
-                        <div className="perfil">
-                            <img className="cartimg" src={Cart}></img>
-                            <img className="perfilimg" src={Perfil}></img>
-                                <p>Gustavo Padilla Ruiz</p>
+                        <div className="imgNav">
+                            <Link to='/carrito'><img className="cartimg" src={Cart}></img></Link>
+
+                            <Link to='wishlist'><img src={Wish} className="cartimg" /></Link>
+
+                            <Link
+                                to='/perfil'>  <img className="perfilimg" src={Perfil}>
+                                </img></Link>
                         </div>
+
+                    </li>
+                    <li>
+                        {usuario ? (
+                            <Link to='/' className="sesion">{usuario.PrimerNombre}</Link>
+                        ) : (
+                            <Link to='/login' className="sesion">Login</Link>
+                        )}
+
                     </li>
                 </ul>
             </nav>
+
         </>
+
+
     )
 }
