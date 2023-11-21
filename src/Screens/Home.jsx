@@ -36,7 +36,7 @@ export const Home = () => {
                         <Navbar usuario={usuario}/>
                     </div>
                     <Bienvenida />
-                    <Publicaciones />
+                    <Publicaciones usuario={usuario}/>
 
                     <Footer />
                 </div>

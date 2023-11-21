@@ -24,7 +24,6 @@ export const Login = () => {
       if (response.ok) {
         const data = await response.json();
         const { userId } = data;
-        alert(userId);
         navigate("/", { state: { userId } });
       
         console.log('Usuario autenticado correctamente');
