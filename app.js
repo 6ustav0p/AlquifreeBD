@@ -14,7 +14,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'alquifree',
+    database: 'alquifreev2',
     port: 3306
 });
 
@@ -157,18 +157,123 @@ app.get('/productosEnCarrito/:userId', (req, res) => {
     });
 });
 
-app.delete('/vaciarCarrito/:userId', (req, res) => {
-    const userId = req.params.userId;
 
-    const query = `DELETE FROM carrito WHERE Usuario_idUsuario = ?`;
-    db.query(query, [userId], (error, results) => {
+app.delete('/eliminarProducto/:userId/:productId', (req, res) => {
+    const userId = req.params.userId;
+    const productId = req.params.productId;
+
+    const deleteProductQuery = `DELETE FROM carrito_producto WHERE Carrito_idCarrito = ? AND Producto_idProducto = ?`;
+    db.query(deleteProductQuery, [userId, productId], (error, results) => {
         if (error) {
-            res.status(500).json({ message: 'Error al vaciar el carrito' });
+            res.status(500).json({ message: 'Error al eliminar el producto del carrito' });
         } else {
-            res.status(200).json({ message: 'Carrito vaciado exitosamente' });
+            res.status(200).json({ message: 'Producto eliminado exitosamente del carrito' });
         }
     });
 });
+
+app.post('/guardarCompra', async (req, res) => {
+    try {
+        const userId = req.body.userId; // Suponiendo que userId es enviado desde el cliente
+
+        // Encontrar el carrito del usuario
+        const findCartQuery = 'SELECT idCarrito FROM carrito WHERE Usuario_idUsuario = ?';
+        db.query(findCartQuery, [userId], async (cartError, cartResults) => {
+            if (cartError) {
+                console.error('Error al encontrar el carrito del usuario:', cartError);
+                res.status(500).json({ error: 'Error al procesar la solicitud' });
+                return;
+            }
+
+            if (cartResults.length === 0) {
+                res.status(404).json({ error: 'Carrito no encontrado para este usuario' });
+                return;
+            }
+
+            const carritoId = cartResults[0].idCarrito;
+
+            // Crear un nuevo pedido
+            const insertPedidoQuery = 'INSERT INTO pedido (Carrito_idCarrito, Fecha, Monto, Estado) VALUES (?, ?, ?, ?)';
+            const currentDate = new Date();
+            db.query(insertPedidoQuery, [carritoId, currentDate, 0, 'En proceso'], async (pedidoError, pedidoResult) => {
+                if (pedidoError) {
+                    console.error('Error al crear un nuevo pedido:', pedidoError);
+                    res.status(500).json({ error: 'Error al procesar la solicitud' });
+                    return;
+                }
+
+                const pedidoId = pedidoResult.insertId; // Obtener el idPedido recién insertado
+
+                // Obtener productos del carrito
+                const productosCarritoQuery = 'SELECT * FROM carrito_producto WHERE Carrito_idCarrito = ?';
+                db.query(productosCarritoQuery, [carritoId], async (productosError, productosResult) => {
+                    if (productosError) {
+                        console.error('Error al obtener productos del carrito:', productosError);
+                        res.status(500).json({ error: 'Error al procesar la solicitud' });
+                        return;
+                    }
+
+                    // Calcular el total de la compra
+                    let total = req.body.total;
+
+                    // Insertar en la tabla historialcompras utilizando el pedidoId
+                    const insertHistorialQuery = 'INSERT INTO historialcompras (Pedido_idPedido, Usuario_idUsuario, Fecha, Monto, Estado) VALUES (?, ?, ?, ?, ?)';
+                    db.query(insertHistorialQuery, [pedidoId, userId, currentDate, total, 'Completado'], async (historialError, historialResult) => {
+                        if (historialError) {
+                            console.error('Error al guardar en historial de compras:', historialError);
+                            res.status(500).json({ error: 'Error al procesar la solicitud' });
+                            return;
+                        }
+                        const historialId = historialResult.insertId; // Obtener el ID del historial de compras recién insertado
+
+                        // Respuesta al cliente
+                        res.status(200).json({ message: 'Compra guardada en historial de compras correctamente.' });
+
+                        for (const producto of productosResult) {
+                            // Insertar en historialcompras_producto
+                            const insertHistorialComprasProductoQuery = 'INSERT INTO historialcompras_producto (HistorialCompras_id, Producto_id) VALUES (?, ?)';
+                            db.query(
+                                insertHistorialComprasProductoQuery,
+                                [historialId, producto.Producto_idProducto],
+                                (historialError) => {
+                                    if (historialError) {
+                                        console.error('Error al insertar producto en historialcompras_producto:', historialError);
+                                    }
+                                }
+                            );
+                        }
+                    });
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Error al guardar la compra en historial de compras:', error);
+        res.status(500).json({ error: 'Error al procesar la solicitud.' });
+    }
+});
+
+app.get('/historialCompras/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    const query = `
+        SELECT hc.idHistorialCompras, hc.Fecha, hc.Monto, hc.Estado, GROUP_CONCAT(pr.Descripcion) AS Productos
+        FROM historialcompras hc
+        INNER JOIN historialcompras_producto hcp ON hc.idHistorialCompras = hcp.HistorialCompras_id
+        INNER JOIN producto pr ON hcp.Producto_id = pr.idProducto
+        WHERE hc.Usuario_idUsuario = ?
+        GROUP BY hc.idHistorialCompras
+    `;
+
+    db.query(query, [userId], (error, results) => {
+        if (error) {
+            console.error('Error al obtener historial de compras:', error);
+            res.status(500).json({ message: 'Error al obtener historial de compras' });
+        } else {
+            res.status(200).json({ historialCompras: results });
+        }
+    });
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

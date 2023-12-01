@@ -6,6 +6,7 @@ import { Carrito } from "./Screens/Carrito";
 import { Perfil } from "./Screens/Perfil";
 import { Home } from "./Screens/Home";
 import { Wish } from "./Screens/Wish";
+import { Historial } from "./Screens/Historial";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/carrito" element={<Carrito />} />
         <Route path="/perfil" element={<Perfil />} />
         <Route path="/wishlist" element={<Wish/>}/>
+        <Route path="/historial" element={<Historial/>}/>
       </Routes>
    
     </Router>

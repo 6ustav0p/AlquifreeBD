@@ -3,6 +3,7 @@ import React from 'react'
 import Cart from '../img/cart.png'
 import Perfil from '../img/perfil.png'
 import Wish from '../img/wish.png'
+import Historial from '../img/historial.png'
 export const Navbar = ({ usuario }) => {
     const navigate = useNavigate();
 
@@ -16,6 +17,10 @@ export const Navbar = ({ usuario }) => {
 
     const handleWishClick = () => {
         navigate('/wishlist', { state: usuario });
+    };
+
+    const handleHistorialClick = () => {
+        navigate('/historial', { state: usuario });
     };
 
     return (
@@ -58,14 +63,16 @@ export const Navbar = ({ usuario }) => {
                             <a onClick={handleCartClick}><img className="cartimg" src={Cart}></img></a>
 
                             <a onClick={handleWishClick}><img src={Wish} className="cartimg" /></a>
-
-                            <a onClick={handlePerfilClick}><img className="perfilimg" src={Perfil}></img></a>
+                            <a onClick={handleHistorialClick}><img className="cartimg" src={Historial}></img></a>
                         </div>
 
                     </li>
                     <li>
                         {usuario ? (
-                            <Link to='/' className="sesion">{usuario.PrimerNombre}</Link>
+                            <>
+                                <a onClick={handlePerfilClick}><img className="cartimg" src={Perfil}></img></a>
+                                <Link to='/' className="sesion">{usuario.PrimerNombre}</Link>
+                            </>
                         ) : (
                             <Link to='/login' className="sesion">Login</Link>
                         )}
