@@ -274,6 +274,49 @@ app.get('/historialCompras/:userId', (req, res) => {
     });
 });
 
+app.post('/wishlist', (req, res) => {
+    const { userId, productId } = req.body;
+    const sql = 'INSERT INTO wishlist (Usuario_idUsuario, Producto_idProducto) VALUES (?, ?)';
+    db.query(sql, [userId, productId], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al agregar a la lista de deseos' });
+            return;
+        }
+        res.status(200).json({ message: 'Producto agregado a la lista de deseos' });
+    });
+});
+
+
+app.get('/wishlist/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const sql = `
+        SELECT p.idProducto, p.Descripcion, p.Precio 
+        FROM wishlist w
+        JOIN producto p ON w.Producto_idProducto = p.idProducto
+        WHERE w.Usuario_idUsuario = ?`;
+    db.query(sql, [userId], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al recuperar la lista de deseos' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
+
+app.delete('/wishlist/:userId/:productId', (req, res) => {
+    const { userId, productId } = req.params;
+    const sql = 'DELETE FROM wishlist WHERE Usuario_idUsuario = ? AND Producto_idProducto = ?';
+    db.query(sql, [userId, productId], (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error al eliminar de la lista de deseos' });
+            return;
+        }
+        res.status(200).json({ message: 'Producto eliminado de la lista de deseos' });
+    });
+});
+
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

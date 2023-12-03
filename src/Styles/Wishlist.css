@@ -1,0 +1,45 @@
+
+.wishlist-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+
+.wishlist-title {
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+
+.wishlist-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+
+.table-header {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    padding: 8px;
+    text-align: left;
+}
+
+
+.table-row:nth-child(even) {
+    background-color: #e8e8e8;
+}
+
+/* Estilos para los datos de la tabla */
+.table-data {
+    padding: 8px;
+}
+
+/* Estilos para resaltar la fila seleccionada (si es necesario) */
+.table-row.selected {
+    background-color: #ffc;
+    font-weight: bold;
+}
