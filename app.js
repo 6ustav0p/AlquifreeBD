@@ -14,7 +14,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'alquifin',
+    database: 'alquifreev3',
     port: 3306
 });
 

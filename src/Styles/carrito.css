@@ -55,6 +55,12 @@
   font-weight: bold;
 }
 
+.input-cantidad{
+  margin: 10px;
+  text-align: center;
+
+}
+
 .btn-eliminar {
   background-color: #ff0000;
   color: #fff;
@@ -111,6 +117,7 @@
 
 .btn-guardar-compra {
   padding: 12px 20px;
+  margin-top: 5px;
   border: none;
   border-radius: 5px;
   background-color: #4CAF50;

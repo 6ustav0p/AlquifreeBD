@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import "../Styles/perfil.css";
-import Perfilimg from "../img/perfil.png";
+import Perfilimg from "../img/perfil_usuario.png";
 import { Titulo } from "../Components/Titulo";
 import { Footer } from "../Components/Footer";
 import { useNavigate } from "react-router-dom";
@@ -72,7 +72,6 @@ export const Perfil = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 };
