@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import '../Styles/historial.css';
+import { Titulo } from '../Components/Titulo';
 
 export const Historial = () => {
     const location = useLocation();
@@ -19,34 +20,36 @@ export const Historial = () => {
     }, [usuario.idUsuario]);
 
     return (
-        <div className="historial-container">
-            <h1 className="historial-title">Historial de Compras de {usuario.NombreCompleto}</h1>
-            <table className="historial-table">
-                <thead>
-                    <tr>
-                        <th className="table-header">Fecha</th>
-                        <th className="table-header">Monto</th>
-                        <th className="table-header">Estado</th>
-                        <th className="table-header">Productos</th>
-                        {/* Agrega más encabezados si es necesario */}
-                    </tr>
-                </thead>
-                <tbody>
-                    {historialCompras.map(compra => (
-                        <tr key={compra.idHistorialCompras} className="table-row">
-                            <td className="table-data">{compra.Fecha}</td>
-                            <td className="table-data">{compra.Monto}</td>
-                            <td className="table-data">{compra.Estado}</td>
-                            <td className="table-data">
-                                {compra.Productos && compra.Productos.split(',').map(producto => (
-                                    <span key={producto}>{producto.trim()}, </span>
-                                ))}
-                            </td>
+        <>
+            <Titulo name={'Historial'} />
+            <div className="historial-container">
+                <h1 className="historial-title">Historial de Compras de {usuario.NombreCompleto}</h1>
+                <table className="historial-table">
+                    <thead>
+                        <tr>
+                            <th className="table-header">Fecha</th>
+                            <th className="table-header">Monto</th>
+                            <th className="table-header">Estado</th>
+                            <th className="table-header">Productos</th>
                         </tr>
-                    ))}
+                    </thead>
+                    <tbody>
+                        {historialCompras.map(compra => (
+                            <tr key={compra.idHistorialCompras} className="table-row">
+                                <td className="table-data">{compra.Fecha}</td>
+                                <td className="table-data">{compra.Monto}</td>
+                                <td className="table-data">{compra.Estado}</td>
+                                <td className="table-data">
+                                    {compra.Productos && compra.Productos.split(',').map(producto => (
+                                        <span key={producto}>{producto.trim()}, </span>
+                                    ))}
+                                </td>
+                            </tr>
+                        ))}
 
-                </tbody>
-            </table>
-        </div>
+                    </tbody>
+                </table>
+            </div>
+        </>
     );
 };

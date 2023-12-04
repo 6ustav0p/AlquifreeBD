@@ -3,7 +3,7 @@ import { Titulo } from '../Components/Titulo';
 import '../Styles/login.css';
 import Logo from '../img/logo.jpg';
 import { useNavigate } from "react-router-dom";
-
+import Swal from 'sweetalert2';
 export const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -24,12 +24,30 @@ export const Login = () => {
       if (response.ok) {
         const data = await response.json();
         const { userId } = data;
+        const { nombre } = data;
+        Swal.fire({
+          title: `Bienvenido de vuelta ${nombre}!`,
+          showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster',
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster',
+          },
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+        });
         navigate("/", { state: { userId } });
-      
+
         console.log('Usuario autenticado correctamente');
       } else {
         // Maneja errores si la solicitud no fue exitosa
         console.error('Error al autenticar usuario');
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Parece que las credenciales son incorrectas!",
+        });
       }
     } catch (error) {
       console.error('Error al procesar la solicitud:', error);

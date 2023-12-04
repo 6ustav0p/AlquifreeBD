@@ -5,9 +5,10 @@ import { Titulo } from '../Components/Titulo'
 import { Navbar } from '../Components/Navbar'
 import { Bienvenida } from '../Components/Bienvenida'
 import { Publicaciones } from '../Components/Publicaciones'
+import Swal from 'sweetalert2';
 export const Home = () => {
     const location = useLocation();
-    const { userId } = location.state || {};
+    const { userId} = location.state || {};
     const [usuario, setUsuario] = useState(null);
     if (userId !== '') {
         useEffect(() => {
@@ -26,17 +27,16 @@ export const Home = () => {
                 });
         }, [userId]);
     }
-
     return (
         <>
-            {usuario ? (
+            {usuario  ? (
                 <div className="container">
                     <Titulo name={'Alquifree'} />
                     <div className="header">
-                        <Navbar usuario={usuario}/>
+                        <Navbar usuario={usuario} />
                     </div>
                     <Bienvenida />
-                    <Publicaciones usuario={usuario}/>
+                    <Publicaciones usuario={usuario} />
 
                     <Footer />
                 </div>

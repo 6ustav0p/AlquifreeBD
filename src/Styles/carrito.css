@@ -75,4 +75,17 @@
   .total {
     font-weight: bold;
   }
+  .btn-guardar-compra {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
   
+  .btn-guardar-compra:hover {
+    background-color: #45a049;
+  }

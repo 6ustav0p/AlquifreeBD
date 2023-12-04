@@ -14,7 +14,7 @@ const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'alquifreev2',
+    database: 'alquifreev3',
     port: 3306
 });
 
@@ -72,9 +72,9 @@ app.post('/login', (req, res) => {
         }
 
         const userId = results[0].idUsuario; // Suponiendo que el ID del usuario está en la posición cero del resultado
-
+        const nombre = results[0].PrimerNombre
         // Usuario autenticado, enviar una respuesta exitosa con el ID del usuario
-        return res.status(200).json({ userId });
+        return res.status(200).json({ userId, nombre });
     });
 });
 
@@ -274,48 +274,114 @@ app.get('/historialCompras/:userId', (req, res) => {
     });
 });
 
-app.post('/wishlist', (req, res) => {
+app.post('/wishlist/agregar', (req, res) => {
     const { userId, productId } = req.body;
-    const sql = 'INSERT INTO wishlist (Usuario_idUsuario, Producto_idProducto) VALUES (?, ?)';
-    db.query(sql, [userId, productId], (error, results) => {
+
+    // Verificar si el usuario tiene una wishlist existente
+    const checkWishlistQuery = 'SELECT idWishlist FROM wishlist WHERE Usuario_idUsuario = ?';
+    db.query(checkWishlistQuery, [userId], (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Error al agregar a la lista de deseos' });
-            return;
+            console.error('Error al verificar la wishlist:', error);
+            res.status(500).json({ message: 'Error al verificar la wishlist' });
+        } else {
+            if (results.length === 0) {
+                // Si el usuario no tiene una wishlist, crear una nueva
+                const createWishlistQuery = 'INSERT INTO wishlist (Usuario_idUsuario) VALUES (?)';
+                db.query(createWishlistQuery, [userId], (wishlistError, wishlistResult) => {
+                    if (wishlistError) {
+                        console.error('Error al crear una nueva wishlist:', wishlistError);
+                        res.status(500).json({ message: 'Error al crear una nueva wishlist' });
+                    } else {
+                        // Después de crear la wishlist, agregar el producto a wishlist_producto
+                        const wishlistId = wishlistResult.insertId;
+                        insertProductIntoWishlist(wishlistId, productId, res);
+                    }
+                });
+            } else {
+                const wishlistId = results[0].idWishlist;
+                insertProductIntoWishlist(wishlistId, productId, res);
+            }
         }
-        res.status(200).json({ message: 'Producto agregado a la lista de deseos' });
     });
 });
+
+function insertProductIntoWishlist(wishlistId, productId, res) {
+    // Verificar si el producto ya está en la wishlist
+    const checkProductQuery = 'SELECT * FROM wishlist_producto WHERE Wishlist_idWishlist = ? AND Producto_idProducto = ?';
+    db.query(checkProductQuery, [wishlistId, productId], (checkError, checkResults) => {
+        if (checkError) {
+            console.error('Error al verificar el producto en la wishlist:', checkError);
+            res.status(500).json({ message: 'Error al verificar el producto en la wishlist' });
+        } else {
+            if (checkResults.length > 0) {
+                // Si el producto ya está en la wishlist, devolver un mensaje indicando la duplicación
+                res.status(400).json({ message: 'El producto ya está en la wishlist' });
+            } else {
+                // Si el producto no está en la wishlist, proceder a insertarlo
+                const insertProductQuery = 'INSERT INTO wishlist_producto (Wishlist_idWishlist, Producto_idProducto) VALUES (?, ?)';
+                db.query(insertProductQuery, [wishlistId, productId], (insertError, insertResult) => {
+                    if (insertError) {
+                        console.error('Error al agregar producto a la wishlist:', insertError);
+                        res.status(500).json({ message: 'Error al agregar producto a la wishlist' });
+                    } else {
+                        res.status(200).json({ message: 'Producto agregado a la wishlist correctamente' });
+                    }
+                });
+            }
+        }
+    });
+}
 
 
 app.get('/wishlist/:userId', (req, res) => {
     const userId = req.params.userId;
-    const sql = `
-        SELECT p.idProducto, p.Descripcion, p.Precio 
+
+    const query = `
+        SELECT p.idProducto, p.Descripcion, p.Precio, p.Stock
         FROM wishlist w
-        JOIN producto p ON w.Producto_idProducto = p.idProducto
-        WHERE w.Usuario_idUsuario = ?`;
-    db.query(sql, [userId], (error, results) => {
+        INNER JOIN wishlist_producto wp ON w.idWishlist = wp.Wishlist_idWishlist
+        INNER JOIN producto p ON wp.Producto_idProducto = p.idProducto
+        WHERE w.Usuario_idUsuario = ?
+    `;
+
+    db.query(query, [userId], (error, wishlistItems) => {
         if (error) {
-            res.status(500).json({ error: 'Error al recuperar la lista de deseos' });
-            return;
+            console.error('Error al obtener la wishlist:', error);
+            res.status(500).json({ message: 'Error al obtener la wishlist' });
+        } else {
+            res.status(200).json({ wishlist: wishlistItems });
         }
-        res.json(results);
     });
 });
 
+app.delete('/wishlist/eliminar', (req, res) => {
+    const { userId, productId } = req.body;
 
-app.delete('/wishlist/:userId/:productId', (req, res) => {
-    const { userId, productId } = req.params;
-    const sql = 'DELETE FROM wishlist WHERE Usuario_idUsuario = ? AND Producto_idProducto = ?';
-    db.query(sql, [userId, productId], (error, results) => {
+    // Validar si el producto está en la wishlist del usuario
+    const checkProductQuery = 'SELECT Wishlist_idWishlist FROM wishlist_producto WHERE Wishlist_idWishlist = (SELECT idWishlist FROM wishlist WHERE Usuario_idUsuario = ?) AND Producto_idProducto = ?';
+    db.query(checkProductQuery, [userId, productId], (error, results) => {
         if (error) {
-            res.status(500).json({ error: 'Error al eliminar de la lista de deseos' });
-            return;
+            console.error('Error al verificar el producto en la wishlist:', error);
+            res.status(500).json({ message: 'Error al verificar el producto en la wishlist' });
+        } else {
+            if (results.length === 0) {
+                res.status(404).json({ message: 'El producto no está en la wishlist del usuario' });
+            } else {
+                const wishlistId = results[0].Wishlist_idWishlist;
+                // Eliminar el producto de wishlist_producto
+                const deleteProductQuery = 'DELETE FROM wishlist_producto WHERE Wishlist_idWishlist = ? AND Producto_idProducto = ?';
+                db.query(deleteProductQuery, [wishlistId, productId], (deleteError, deleteResult) => {
+                    if (deleteError) {
+                        console.error('Error al eliminar el producto de la wishlist:', deleteError);
+                        res.status(500).json({ message: 'Error al eliminar el producto de la wishlist' });
+                    } else {
+                        res.status(200).json({ message: 'Producto eliminado de la wishlist correctamente' });
+                    }
+                });
+            }
         }
-        res.status(200).json({ message: 'Producto eliminado de la lista de deseos' });
     });
 });
-
 
 
 const PORT = process.env.PORT || 3000;

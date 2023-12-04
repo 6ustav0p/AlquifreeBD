@@ -35,7 +35,7 @@ export const Navbar = ({ usuario }) => {
                         <Link to='/'>Publicar</Link>
                     </li>
                     <li>
-                        <div class="search-container">
+                        <div className="search-container">
                             <input type="text" className="search-input" name="q" placeholder="🔎 Buscar..." autoComplete="off" />
                             <button type="submit" className="search-button">Buscar</button>
                         </div>
