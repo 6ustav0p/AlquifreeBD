@@ -13,6 +13,7 @@ export const Historial = () => {
             .then(response => response.json())
             .then(data => {
                 setHistorialCompras(data.historialCompras);
+                console.log(data.historialCompras);
             })
             .catch(error => {
                 console.error('Error al obtener el historial de compras:', error);
@@ -40,9 +41,16 @@ export const Historial = () => {
                                 <td className="table-data">{compra.Monto}</td>
                                 <td className="table-data">{compra.Estado}</td>
                                 <td className="table-data">
-                                    {compra.Productos && compra.Productos.split(',').map(producto => (
-                                        <span key={producto}>{producto.trim()}, </span>
-                                    ))}
+                                    {compra.Productos && compra.Productos.split(',').map(productoCantidad => {
+                                        const descripcion = productoCantidad.slice(0, -1); // Extraer la descripción
+                                        const cantidad = productoCantidad.slice(-1); // Extraer la cantidad (suponiendo que está al final)
+
+                                        return (
+                                            <span key={productoCantidad}>
+                                                {descripcion.trim()} ({cantidad.trim()}),{' '}
+                                            </span>
+                                        );
+                                    })}
                                 </td>
                             </tr>
                         ))}

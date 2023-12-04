@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Titulo } from '../Components/Titulo';
 import '../Styles/login.css';
 import Logo from '../img/logo.jpg';
-import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import { Link, useNavigate } from "react-router-dom";
 export const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -79,6 +79,10 @@ export const Login = () => {
             value={'Sign in'}
           />
         </form>
+        {/* <div className='creaCuenta'>
+          <p>¿No tiene cuenta?</p>
+          <Link to='/registro'>Crear cuenta</Link>
+        </div> */}
       </div>
     </div>
   );

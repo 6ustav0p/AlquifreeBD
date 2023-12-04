@@ -20,9 +20,15 @@ export const Carrito = () => {
     try {
       const userId = usuario.idUsuario;
       let total = 0;
+
+      const productosComprados = productosEnCarrito.map(producto => ({
+        productId: producto.idProducto,
+        cantidadComprada: producto.Cantidad,
+      }));
+      
       productosEnCarrito.forEach(producto => {
         if (typeof producto.Precio === 'number') {
-          total += producto.Precio;
+          total += producto.Precio*producto.Cantidad;
         }
       });
       // Obtener los productos actuales en el carrito para realizar la compra
@@ -37,6 +43,26 @@ export const Carrito = () => {
       if (!response.ok) {
         throw new Error('Error al guardar la compra');
       }
+
+      productosComprados.forEach(async producto => {
+        const { productId, cantidadComprada } = producto;
+        try {
+          const response = await fetch(`http://localhost:3000/actualizarStock/${productId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cantidadComprada }),
+          });
+  
+          if (!response.ok) {
+            throw new Error('Error al actualizar el stock del producto');
+          }
+        } catch (error) {
+          console.error('Error al actualizar el stock:', error);
+        }
+      });
+
       Swal.fire({
         position: "center",
         icon: "success",
@@ -44,7 +70,6 @@ export const Carrito = () => {
         showConfirmButton: false,
         timer: 1500
       });
-      // Vaciar el carrito después de guardar la compra exitosamente
       setProductosEnCarrito([]);
       vaciarCarrito_(userId);
     } catch (error) {
@@ -153,7 +178,7 @@ export const Carrito = () => {
     let total = 0;
     productosEnCarrito.forEach(producto => {
       if (typeof producto.Precio === 'number') {
-        total += producto.Precio;
+        total += producto.Precio * producto.Cantidad;
       }
     });
     return total;
@@ -161,6 +186,37 @@ export const Carrito = () => {
 
 
   const imagenesProductos = [imgProducto1, imgProducto2, imgProducto3, imgProducto4, imgProducto5, imgProducto6];
+  const actualizarCantidad = async (nuevaCantidad, productId) => {
+    try {
+      var userId = usuario.idUsuario;
+      const response = await fetch(`http://localhost:3000/actualizarCantidad`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId,
+          productId,
+          nuevaCantidad,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar la cantidad del producto en el carrito');
+      }
+      const updatedProducts = await fetch(`http://localhost:3000/productosEnCarrito/${usuario.idUsuario}`)
+        .then(response => response.json())
+        .then(data => data.productosEnCarrito)
+        .catch(error => {
+          console.error('Error obteniendo productos en el carrito:', error);
+          return [];
+        });
+
+      setProductosEnCarrito(updatedProducts);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
   return (
     <div className="container-carrito">
@@ -177,6 +233,14 @@ export const Carrito = () => {
                   <div className="producto-info">
                     <p className="producto-nombre">{producto.Descripcion}</p>
                     <p className="producto-precio">{`Precio: $${producto.Precio}`}</p>
+                    <input
+                      type="number"
+                      value={producto.Cantidad} // Asegúrate de tener la propiedad 'cantidad' en el estado del producto
+                      onChange={(e) => actualizarCantidad(e.target.value, producto.idProducto)} // Función para actualizar la cantidad
+                      className="input-cantidad"
+                      min="1" // Mínimo permitido
+                      max={producto.Stock} // Máximo basado en el stock disponible
+                    />
                     <button onClick={() => eliminarProducto(producto.idProducto)} className="btn-eliminar">
                       Eliminar
                     </button>
@@ -198,7 +262,7 @@ export const Carrito = () => {
               {productosEnCarrito.map((producto, index) => (
                 <div key={index} className="producto-resumen">
                   <p>{producto.Descripcion}</p>
-                  <p>{`Precio: $${producto.Precio}`}</p>
+                  <p>{`Precio: $${producto.Precio} x ${producto.Cantidad}`}</p>
                 </div>
               ))}
               <p className="total">Total: ${calcularTotal()}</p>

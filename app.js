@@ -91,6 +91,23 @@ app.get('/productos', (req, res) => {
     });
 });
 
+app.put('/actualizarStock/:productId', (req, res) => {
+    const productId = req.params.productId;
+    const cantidadComprada = req.body.cantidadComprada;
+  
+    // Actualizar el stock en tu base de datos
+    const updateStockQuery = 'UPDATE producto SET Stock = Stock - ? WHERE idProducto = ?';
+    db.query(updateStockQuery, [cantidadComprada, productId], (error, results) => {
+      if (error) {
+        console.error('Error al actualizar el stock del producto:', error);
+        res.status(500).json({ error: 'Error al actualizar el stock del producto' });
+      } else {
+        res.status(200).json({ message: 'Stock del producto actualizado correctamente' });
+      }
+    });
+  });
+  
+
 app.post('/agregarAlCarrito', (req, res) => {
     const { userId, productId, quantity } = req.body;
 
@@ -140,7 +157,7 @@ app.get('/productosEnCarrito/:userId', (req, res) => {
     const userId = req.params.userId;
 
     const query = `
-        SELECT DISTINCT p.idProducto, p.Descripcion, p.Precio, p.Stock
+        SELECT DISTINCT p.idProducto, p.Descripcion, p.Precio, p.Stock, cp.Cantidad
         FROM carrito_producto cp
         INNER JOIN producto p ON cp.Producto_idProducto = p.idProducto
         INNER JOIN carrito c ON cp.Carrito_idCarrito = c.idCarrito
@@ -157,6 +174,21 @@ app.get('/productosEnCarrito/:userId', (req, res) => {
     });
 });
 
+app.put('/actualizarCantidad', (req, res) => {
+    const { userId, productId, nuevaCantidad } = req.body;
+  
+    const updateQuantityQuery = 'UPDATE carrito_producto SET Cantidad = ? WHERE Carrito_idCarrito = (SELECT idCarrito FROM carrito WHERE Usuario_idUsuario = ?) AND Producto_idProducto = ?';
+    
+    db.query(updateQuantityQuery, [nuevaCantidad, userId, productId], (error, results) => {
+      if (error) {
+        console.error('Error al actualizar la cantidad del producto en el carrito:', error);
+        res.status(500).json({ error: 'Error al actualizar la cantidad del producto en el carrito' });
+      } else {
+        res.status(200).json({ message: 'Cantidad del producto en el carrito actualizada correctamente' });
+      }
+    });
+  });
+  
 
 app.delete('/eliminarProducto/:userId/:productId', (req, res) => {
     const userId = req.params.userId;
@@ -251,10 +283,10 @@ app.post('/guardarCompra', async (req, res) => {
 
                         for (const producto of productosResult) {
                             // Insertar en historialcompras_producto
-                            const insertHistorialComprasProductoQuery = 'INSERT INTO historialcompras_producto (HistorialCompras_id, Producto_id) VALUES (?, ?)';
+                            const insertHistorialComprasProductoQuery = 'INSERT INTO historialcompras_producto (HistorialCompras_id, Producto_id, Cantidad) VALUES (?, ?, ?)';
                             db.query(
                                 insertHistorialComprasProductoQuery,
-                                [historialId, producto.Producto_idProducto],
+                                [historialId, producto.Producto_idProducto, producto.Cantidad],
                                 (historialError) => {
                                     if (historialError) {
                                         console.error('Error al insertar producto en historialcompras_producto:', historialError);
@@ -276,7 +308,7 @@ app.get('/historialCompras/:userId', (req, res) => {
     const userId = req.params.userId;
 
     const query = `
-        SELECT hc.idHistorialCompras, hc.Fecha, hc.Monto, hc.Estado, GROUP_CONCAT(pr.Descripcion) AS Productos
+        SELECT hc.idHistorialCompras, hc.Fecha, hc.Monto, hc.Estado,  GROUP_CONCAT(pr.Descripcion , hcp.Cantidad) AS Productos
         FROM historialcompras hc
         INNER JOIN historialcompras_producto hcp ON hc.idHistorialCompras = hcp.HistorialCompras_id
         INNER JOIN producto pr ON hcp.Producto_id = pr.idProducto
