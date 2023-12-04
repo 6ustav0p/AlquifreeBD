@@ -1,106 +1,147 @@
 .container-carrito {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    /* Estilos adicionales según tu preferencia */
-  }
-  
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+.carrito {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.carrito-productos {
+  flex: 1;
+}
+
+.producto {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.producto:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.producto img {
+  width: 100px;
+  height: 100px;
+  margin-right: 20px;
+}
+
+.producto-info {
+  flex: 1;
+}
+
+.producto-nombre {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #333;
+  font-size: 1.1em;
+}
+
+.producto-precio {
+  color: #4CAF50;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.btn-eliminar {
+  background-color: #ff0000;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-eliminar:hover {
+  background-color: #cc0000;
+}
+
+.carrito-resumen {
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-vaciar {
+  background-color: #333;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-vaciar:hover {
+  background-color: #292929;
+}
+
+.producto-resumen {
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.empty-cart {
+  font-style: italic;
+  color: #888;
+}
+
+.total {
+  font-weight: bold;
+  font-size: 1.2em;
+  color: var(--color-primario);
+}
+
+.btn-guardar-compra {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-guardar-compra:hover {
+  background-color: #45a049;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
   .carrito {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
+      flex-direction: column;
   }
-  
-  .carrito-productos {
-    flex: 1;
+
+  .carrito-productos, .carrito-resumen {
+      width: 100%;
   }
-  
-  .producto {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #ccc;
-    padding: 10px 0;
-  }
-  
+
   .producto img {
-    width: 100px;
-    height: 100px;
-    margin-right: 20px;
+      width: 80px;
+      height: 80px;
   }
-  
-  .producto-info {
-    flex: 1;
-  }
-  
-  .producto-nombre {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  .producto-precio {
-    color: #555;
-    margin-bottom: 10px;
-  }
-  
-  .btn-eliminar {
-    background-color: #ff0000;
-    color: #fff;
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-  }
-  
-  .carrito-resumen {
-    flex: 1;
-  }
-  
-  .btn-vaciar {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    margin-bottom: 20px;
-  }
-  
-  .producto-resumen {
-    margin-bottom: 10px;
-  }
-  
-  .empty-cart {
-    font-style: italic;
-    color: #888;
-  }
-  
-  .total {
-    font-weight: bold;
-  }
-  .btn-guardar-compra {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #4CAF50;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-guardar-compra:hover {
-    background-color: #45a049;
-  }
-  .input-cantidad {
-    width: 60px;
-    margin: 10px;
-    padding: 8px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: none;
-    outline: none;
-  }
-  
-  .input-cantidad:focus {
-    border-color: #2980b9;
-    box-shadow: 0 0 5px rgba(41, 128, 185, 0.5);
-  }
+}
+
+/* Estilos para Títulos y Encabezados */
+.carrito-productos h1, .carrito-resumen h1 {
+  color: #333;
+  margin-bottom: 20px;
+}

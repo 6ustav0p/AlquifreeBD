@@ -1,14 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap');
+
+:root {
+    --color-primario: rgb(76, 91, 175);
+    --color-secundario: #FFC107;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
 .container-perfil {
     background-color: white;
     height: 100vh;
     width: 60%;
     margin: 40px auto;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
 }
 
 .container-perfil .perfil {
     display: flex;
     height: 100%;
-
 }
 
 .fotoPerfil {
@@ -24,6 +36,8 @@
     background-color: gray;
     border-radius: 50%;
     padding: 20px;
+    border: 3px solid #ddd;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
 }
 
 .infoPerfil {
@@ -36,9 +50,11 @@
     gap: 10px;
 }
 
-.campos input {
-    width: 100%;
-    height: 20px;
+.infoPerfil h1, .infoPerfil h2, .infoPerfil h3 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--color-primario);
+    margin-bottom: 15px;
+    font-size: 1.5em;
 }
 
 .campos {
@@ -48,10 +64,46 @@
     flex-direction: column;
     gap: 15px;
 }
-/* perfil.css */
+
+.campos label {
+    font-weight: bold;
+    color: #333;
+}
+
+.campos input {
+    width: 100%;
+    height: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+}
+
+.campos input:focus {
+    border-color: var(--color-primario);
+    outline: none;
+}
 
 .btn-cerrarsesion {
-    background-color: #ff4d4d;
+    background-color: var(--color-primario);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-cerrarsesion:hover, .btn-cerrarsesion:focus {
+    transform: scale(1.05);
+    background-color: #e60000;
+}
+
+/* Estilos para otros botones de acción, si los tienes */
+.btn-accion {
+    background-color: var(--color-secundario);
     color: white;
     padding: 8px 16px;
     border: none;
@@ -59,11 +111,24 @@
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s ease;
-  }
-  
-  .btn-cerrarsesion:hover {
-    background-color: #e60000;
-  }
-  
-  /* Otros estilos que tengas para el resto del perfil */
-  
+}
+
+.btn-accion:hover {
+    background-color: #d4a017;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container-perfil {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .perfil {
+        flex-direction: column;
+    }
+
+    .fotoPerfil, .infoPerfil {
+        width: 100%;
+    }
+}
