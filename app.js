@@ -162,15 +162,35 @@ app.delete('/eliminarProducto/:userId/:productId', (req, res) => {
     const userId = req.params.userId;
     const productId = req.params.productId;
 
-    const deleteProductQuery = `DELETE FROM carrito_producto WHERE Carrito_idCarrito = ? AND Producto_idProducto = ?`;
-    db.query(deleteProductQuery, [userId, productId], (error, results) => {
+    // Primero, busca el id del carrito del usuario
+    const getCartIdQuery = `SELECT idCarrito FROM carrito WHERE Usuario_idUsuario = ?`;
+    db.query(getCartIdQuery, [userId], (error, results) => {
         if (error) {
-            res.status(500).json({ message: 'Error al eliminar el producto del carrito' });
+            res.status(500).json({ message: 'Error al buscar el carrito del usuario' });
         } else {
-            res.status(200).json({ message: 'Producto eliminado exitosamente del carrito' });
+            if (results.length === 0) {
+                res.status(404).json({ message: 'El usuario no tiene un carrito asociado' });
+            } else {
+                const cartId = results[0].idCarrito;
+
+                // Una vez obtenido el id del carrito, procede a eliminar el producto
+                const deleteProductQuery = `DELETE FROM carrito_producto WHERE Carrito_idCarrito = ? AND Producto_idProducto = ?`;
+                db.query(deleteProductQuery, [cartId, productId], (error, deleteResults) => {
+                    if (error) {
+                        res.status(500).json({ message: 'Error al eliminar el producto del carrito' });
+                    } else {
+                        if (deleteResults.affectedRows === 0) {
+                            res.status(404).json({ message: 'El producto no se encontró en el carrito' });
+                        } else {
+                            res.status(200).json({ message: 'Producto eliminado exitosamente del carrito' });
+                        }
+                    }
+                });
+            }
         }
     });
 });
+
 
 app.post('/guardarCompra', async (req, res) => {
     try {
