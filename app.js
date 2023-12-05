@@ -26,11 +26,11 @@ db.connect(err => {
 
 // Crear una nueva dirección
 app.post('/direccion', (req, res) => {
-    const { ciudadId, calle, numero } = req.body;
+    const { ciudadId, InfoVia, numero } = req.body;
   
-    const sql = `INSERT INTO direccion (Ciudad_idCiudad, Calle, Numero) VALUES (?, ?, ?)`;
+    const sql = `INSERT INTO direccion (Ciudad_idCiudad, Info_Via, Numero) VALUES (?, ?, ?)`;
   
-    db.query(sql, [ciudadId, calle, numero], (error, results) => {
+    db.query(sql, [ciudadId, InfoVia, numero], (error, results) => {
       if (error) {
         res.status(500).json({ error: 'Error al crear una nueva dirección en la base de datos' });
         return;
@@ -93,7 +93,7 @@ app.get('/usuario/:id', (req, res) => {
     const id = req.params.id;
     const sql = `SELECT u.*, 
                         CONCAT(u.PrimerNombre, ' ', u.SegundoNombre, ' ', u.PrimerApellido, ' ', u.SegundoApellido) AS NombreCompleto,
-                        d.Calle, 
+                        d.Info_Via, 
                         d.Numero,
                         ci.Nombre AS Ciudad,
                         dp.Nombredpto AS Departamento

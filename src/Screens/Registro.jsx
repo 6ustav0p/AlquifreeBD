@@ -3,11 +3,12 @@ import { Titulo } from '../Components/Titulo';
 import '../Styles/registro.css'
 import { Link, useNavigate } from "react-router-dom";
 export const Registro = () => {
+  const [tipoVia, setTipoVia] = useState('');
   const navigate = useNavigate();
   const [departamentos, setDepartamentos] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [ciudadSeleccionada, setCiudadSeleccionada] = useState('');
-  const [calle, setCalle] = useState('');
+  const [InfoVia, setInfoVia] = useState('');
   const [numero, setNumero] = useState('');
   const [usuario, setUsuario] = useState({
     correo: '',
@@ -17,9 +18,6 @@ export const Registro = () => {
     segundoNombre: '',
     primerApellido: '',
     segundoApellido: '',
-    calle: '',
-    numero: '',
-    departamentoId: '',
     ciudadId: ''
   });
 
@@ -50,11 +48,11 @@ export const Registro = () => {
         },
         body: JSON.stringify({
           ciudadId: ciudadSeleccionada,
-          calle: calle,
+          InfoVia: tipoVia+ " "+ InfoVia,
           numero: numero,
         }),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         return data;
@@ -66,16 +64,16 @@ export const Registro = () => {
       throw error;
     }
   };
-  
+
   const handleCrearUsuario = async (event) => {
     event.preventDefault();
-  
+
     try {
       const direccionData = await handleCrearDireccion(); // Crear la dirección primero
-  
+
       // Agregar la direcciónId al objeto usuario
       const usuarioConDireccion = { ...usuario, direccionId: direccionData.insertId };
-  
+
       const response = await fetch('http://localhost:3000/usuario', {
         method: 'POST',
         headers: {
@@ -83,7 +81,7 @@ export const Registro = () => {
         },
         body: JSON.stringify(usuarioConDireccion), // Enviar el usuario con la direcciónId
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         console.log('Usuario creado correctamente:', data);
@@ -95,8 +93,8 @@ export const Registro = () => {
       console.error('Error creando usuario:', error);
     }
   };
-  
-  
+
+
 
   // Función para manejar cambios en los campos del usuario
   const handleInputChange = event => {
@@ -137,8 +135,22 @@ export const Registro = () => {
             ))}
           </select>
 
-          <label className='registro-label'>Calle:</label>
-          <input type="text" value={calle} onChange={(e) => setCalle(e.target.value)} className='registro-input calle-input' />
+          <label className='registro-label'>Tipo de vía:</label>
+          <select value={tipoVia} onChange={(e) => setTipoVia(e.target.value)} className='registro-select tipo-via-select'>
+            <option value="">Selecciona un tipo de vía</option>
+            <option value="Calle">Calle</option>
+            <option value="Carrera">Carrera</option>
+            <option value="Avenida">Avenida</option>
+            {/* Agrega más opciones según sea necesario */}
+          </select>
+
+          <label className='registro-label'>Especifica direccion:</label>
+          <input
+            type="text"
+            value={InfoVia}
+            onChange={(e) => setInfoVia(e.target.value)} // Concatena el tipo de vía con el nombre de la calle
+            className='registro-input calle-input'
+          />
 
           <label className='registro-label'>Número:</label>
           <input type="number" value={numero} onChange={(e) => setNumero(e.target.value)} className='registro-input numero-input' />
