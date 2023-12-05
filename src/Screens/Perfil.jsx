@@ -59,7 +59,7 @@ export const Perfil = () => {
               <label htmlFor="">Direccion</label>
               <input
                 type="text"
-                value={`${usuario.Calle} #${usuario.Numero}`}
+                value={`${usuario.Info_Via} #${usuario.Numero}`}
                 disabled
               />
               <input
