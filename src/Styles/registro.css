@@ -1,0 +1,44 @@
+/* Estilos para el formulario de registro */
+.registro-form {
+    margin: auto;
+    margin-bottom: 50px;
+    padding: 50px;
+    width: 70%;
+    max-width: 400px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Estilos para los elementos del formulario */
+  .registro-label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    display: block;
+  }
+  
+  .registro-input,
+  .registro-select {
+    width: 300px;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Estilos para el botón */
+  .registro-button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .registro-button:hover {
+    background-color: #45a049;
+  }
+  

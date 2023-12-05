@@ -24,6 +24,71 @@ db.connect(err => {
     console.log('Conectado a la base de datos');
 });
 
+// Crear una nueva dirección
+app.post('/direccion', (req, res) => {
+    const { ciudadId, calle, numero } = req.body;
+  
+    const sql = `INSERT INTO direccion (Ciudad_idCiudad, Calle, Numero) VALUES (?, ?, ?)`;
+  
+    db.query(sql, [ciudadId, calle, numero], (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Error al crear una nueva dirección en la base de datos' });
+        return;
+      }
+  
+      res.status(200).json({ message: 'Dirección creada correctamente', insertId: results.insertId });
+    });
+  });
+  
+  // Crear un nuevo usuario con dirección
+  app.post('/usuario', (req, res) => {
+    const { correo, telefono, contrasena, primerNombre, segundoNombre, primerApellido, segundoApellido, direccionId } = req.body;
+    const sql = `INSERT INTO usuario (Correo, Telefono, Contraseña, PrimerNombre, SegundoNombre, PrimerApellido, SegundoApellido, Direccion_idDireccion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  
+    db.query(sql, [correo, telefono, contrasena, primerNombre, segundoNombre, primerApellido, segundoApellido, direccionId], (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Error al crear el usuario' });
+        return;
+      }
+  
+      res.status(200).json({ message: 'Usuario creado correctamente' });
+    });
+  });
+  
+  // Obtener todos los departamentos
+  app.get('/departamentos', (req, res) => {
+    const sql = `SELECT * FROM departamento`;
+  
+    db.query(sql, (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Error en la consulta de la base de datos' });
+        return;
+      }
+  
+      res.json(results);
+    });
+  });
+  
+  // Obtener todas las ciudades relacionadas con un departamento específico
+  app.get('/ciudades/:departamentoId', (req, res) => {
+    const departamentoId = req.params.departamentoId;
+    const sql = `SELECT * FROM ciudad WHERE Departamento_idDepartamento = ?`;
+  
+    db.query(sql, [departamentoId], (error, results) => {
+      if (error) {
+        res.status(500).json({ error: 'Error en la consulta de la base de datos' });
+        return;
+      }
+  
+      res.json(results);
+    });
+  });
+
+
+
+
+
+
 app.get('/usuario/:id', (req, res) => {
     const id = req.params.id;
     const sql = `SELECT u.*, 

@@ -38,7 +38,6 @@ export const Login = () => {
           showConfirmButton: false,
         });
         navigate("/", { state: { userId } });
-
         console.log('Usuario autenticado correctamente');
       } else {
         // Maneja errores si la solicitud no fue exitosa
@@ -55,35 +54,37 @@ export const Login = () => {
   };
 
   return (
-    <div className='container'>
+    <>
       <Titulo name={'Login'} />
-      <div className='login'>
-        <div className='logo'><img src={Logo} alt="" /></div>
-        <p>Bienvenido a Alquifree donde encontraras todo para tus eventos</p>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder='Correo'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder='Contraseña'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <input
-            type="submit"
-            className='button'
-            value={'Sign in'}
-          />
-        </form>
-        {/* <div className='creaCuenta'>
-          <p>¿No tiene cuenta?</p>
-          <Link to='/registro'>Crear cuenta</Link>
-        </div> */}
+      <div className='container-login'>
+        <div className='login'>
+          <div className='logo'><img src={Logo} alt="" /></div>
+          <p>Bienvenido a Alquifree donde encontraras todo para tus eventos</p>
+          <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              placeholder='Correo'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder='Contraseña'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <input
+              type="submit"
+              className='button-crear'
+              value={'Sign in'}
+            />
+          </form>
+          <div className='creaCuenta'>
+            <p>¿No tiene cuenta?</p>
+            <Link to='/registro'>Crear cuenta</Link>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };

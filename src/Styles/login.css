@@ -1,14 +1,17 @@
-body{
+body {
     background-color: #F2E9E4;
 }
+
 .container {
     margin: auto;
     height: 100%;
     width: 100%;
 }
-.logo{
-   margin: auto;
+
+.logo {
+    margin: auto;
 }
+
 .login {
     display: grid;
     justify-content: center;
@@ -20,25 +23,40 @@ body{
     border-radius: 20px;
     padding: 20px;
 }
-.login img{
+
+.login img {
     border-radius: 30px;
     width: 100px;
     height: 100px;
 }
-form{
+
+form {
     display: grid;
     gap: 10px;
     justify-content: center;
     align-items: center;
 }
-form input{
+
+form input {
     border-radius: 5px;
     border: none;
     width: 300px;
     height: 30px;
     font-size: 18px;
 }
-.button{
+
+.button {
     margin: auto;
     width: 200px;
+}
+
+.creaCuenta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.creaCuenta a {
+    color: white;
 }
